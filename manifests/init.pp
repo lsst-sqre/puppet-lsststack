@@ -6,6 +6,9 @@
 #
 # include lsststack
 #
-class lsststack {
+class lsststack inherits lsststack::params {
 
+anchor { 'lsststack::begin': } ->
+class { 'lsststack::dependencies': } ->
+anchor { 'lsststack::end': }
 }
