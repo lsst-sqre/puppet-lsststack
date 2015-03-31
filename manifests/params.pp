@@ -1,3 +1,6 @@
+# == Class: lsststack::params
+#
+# this class should be considered private
 class lsststack::params {
   case $::osfamily {
     'Debian': {
