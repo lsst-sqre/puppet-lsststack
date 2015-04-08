@@ -16,7 +16,8 @@ Puppet lsststack Module
 5. [Versioning](#versioning)
 6. [Support](#support)
 7. [Contributing](#contributing)
-8. [See Also](#see-also)
+8. [Testing](#testing)
+9. [See Also](#see-also)
 
 
 Overview
@@ -109,6 +110,38 @@ Contributing
 6. Push the topic branch to github
 7. Open a Pull Request (PR) from the *topic branch* onto parent repo's `master` branch
 
+Testing
+-------
+
+Assuming that you are using `bundler`.
+
+### Running unit tests
+
+The default rake target will run both `puppet-lint` and the unit tests.
+
+```sh
+bundle exec rake
+```
+
+### Running acceptance tests
+
+This module uses `beaker` for acceptance/integration testing.
+
+```sh
+BEAKER_set=centos-7.0 bundle exec rake beaker
+```
+
+Where `BEAKER_set` is name of a file (excluding the `.yml` extensions) under the path `spec/acceptance/nodesets/`.  Eg.
+
+```sh
+$ ls -1 spec/acceptance/nodesets/
+centos-6.6.yml
+centos-7.0.yml
+default.yml
+fedora-21.yml
+ubuntu-12.04.yml
+ubuntu-14.04.yml
+```
 
 See Also
 --------
