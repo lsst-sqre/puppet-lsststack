@@ -2,6 +2,8 @@
 #
 # this class should be considered private
 class lsststack::params {
+  $install_dependencies = true
+
   case $::osfamily {
     'Debian': {
       $dependency_packages = [

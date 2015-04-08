@@ -8,6 +8,9 @@ Puppet lsststack Module
 1. [Overview](#overview)
 2. [Description](#description)
 3. [Usage](#usage)
+    * [Examples](#examples)
+    * [Classes](#classes)
+        * [`lsststack`](#lsststack)
 4. [Limitations](#limitations)
     * [Tested Platforms](#tested-platforms)
 5. [Versioning](#versioning)
@@ -19,19 +22,58 @@ Puppet lsststack Module
 Overview
 --------
 
+Creates and manages the build environment for the "LSST Stack"
+
 
 Description
 -----------
+
+This is a puppet module for basic creation and management of the dependencies
+and tools needed to build the "LSST Stack".
 
 
 Usage
 -----
 
+### Examples
+
+```puppet
+include ::lsststack
+```
+
+```puppet
+class { 'lsststack':
+  install_dependencies => true,
+}
+```
+
+### Classes
+
+#### `lsststack`
+
+```puppet
+# defaults
+class { 'lsststack':
+  install_dependencies => true,
+}
+```
+
+##### `install_dependencies`
+
+`Boolean` Defaults to `true`
+
+If `true`, build dependency packages will be installed.
 
 Limitations
 -----------
 
 ### Tested Platforms
+
+* el6
+* el7
+* Fedora 21
+* Ubuntu 12.04
+* Ubuntu 14.04
 
 
 Versioning
@@ -71,3 +113,4 @@ Contributing
 See Also
 --------
 
+* [dm.lsst.org](http://dm.lsst.org)
