@@ -11,6 +11,8 @@ Puppet lsststack Module
     * [Examples](#examples)
     * [Classes](#classes)
         * [`lsststack`](#lsststack)
+    * [Defines](#defines)
+        * [`lsststack::lsstsw`](#lsststacklsstsw)
 4. [Limitations](#limitations)
     * [Tested Platforms](#tested-platforms)
 5. [Versioning](#versioning)
@@ -38,6 +40,8 @@ Usage
 
 ### Examples
 
+#### Installing stack dependencies
+
 ```puppet
 include ::lsststack
 ```
@@ -45,6 +49,21 @@ include ::lsststack
 ```puppet
 class { 'lsststack':
   install_dependencies => true,
+}
+```
+
+#### Installing lsstsw under the test account
+
+```puppet
+lsststack::lsstsw { 'test': }
+```
+
+#### Installing a fork/branch of lsstsw for testing
+
+```puppet
+lsststack::lsstsw { 'test':
+  lsstsw_repo   => 'https://github.com/jhoblitt/lsstsw.git',
+  lsstsw_branch => 'feature/eups-1.5.9',
 }
 ```
 
@@ -64,6 +83,85 @@ class { 'lsststack':
 `Boolean` Defaults to `true`
 
 If `true`, build dependency packages will be installed.
+
+### Defines
+
+#### `lsststack::lsstsw`
+
+Note that this type requires that the `lsststack` class be declared in the
+manifest.
+
+```puppet
+# defaults
+lsststack::lsstsw { 'lsstsw':
+  user            => $title,
+  group           => $title,
+  manage_user     => true,
+  manage_group    => true,
+  lsstsw_repo     => 'https://github.com/lsst/lsstsw.git',
+  lsstsw_branch   => 'master',
+  buildbot_repo   => 'https://github.com/lsst-sqre/buildbot-scripts.git',
+  buildbot_branch => 'master',
+  debug           => false,
+}
+```
+
+##### `user`
+
+`String` Defaults to resource title
+
+The system user account to use.
+
+##### `group`
+
+`String` Defaults to resource title
+
+The system user group to use.
+
+##### `manage_user`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `User` resource is declared for `$user`. If `false`, a `User` resource must be externally declared in the manifest.
+
+##### `manage_group`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `Group` resource is declared for `$group`. If `false`, a `Group`
+resource must be externally declared in the manifest.
+
+##### `lsstsw_repo`
+
+`String` Defaults to 'https://github.com/lsst/lsstsw.git'
+
+The URL to retrive the `lsst/lsstsw` repo from.
+
+##### `lsstsw_branch`
+
+`String` Defaults to 'master'
+
+The git ref to checkout.
+
+##### `buildbot_repo`
+
+`String` Defaults to 'https://github.com/lsst-sqre/buildbot-scripts.git'
+
+The URL to retrive the `lsst-sqre/buildbot-scripts` repo from.
+
+##### `buildbot_branch`
+
+`String` Defaults to 'master'
+
+The git ref to checkout.
+
+##### `debug`
+
+`Boolean` Defaults to `false`
+
+This parameter is only useful for development and should not be considered
+part of the public API of this type.
+
 
 Limitations
 -----------
