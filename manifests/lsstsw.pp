@@ -141,7 +141,7 @@ define lsststack::lsstsw(
   exec { 'afwdata_clone':
     command => "git clone -b master ${afwdata_bundle} ${afwdata_clone}",
     path    => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
-#    cwd     => $home,
+    cwd     => $home,
     creates => $afwdata_clone,
     user    => $user,
     timeout => 3600,
