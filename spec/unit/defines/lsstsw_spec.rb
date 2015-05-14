@@ -78,6 +78,12 @@ EOS
       end
       it do
         should contain_exec('afwdata_clone').with(
+          :command => "git clone -b master /home/#{name}/afwdata.bundle /home/#{name}/lsstsw/build/afwdata",
+          :path    => ["/home/#{name}/lsstsw/lfs/bin", '/bin', '/usr/bin'],
+          :cwd     => "/home/#{name}",
+          :creates => "/home/#{name}/lsstsw/build/afwdata",
+          :user    => name,
+          :timeout => 3600
         ).that_requires([
           "Exec[deploy]",
           "Wget::Fetch[/home/#{name}/afwdata.bundle]",
