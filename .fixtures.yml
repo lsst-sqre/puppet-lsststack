@@ -3,5 +3,11 @@ fixtures:
     stdlib:
       repo: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
       ref:  '4.6.0'
+    wget:
+      repo: 'https://github.com/maestrodev/puppet-wget.git'
+      ref:  'v1.7.0'
+    vcsrepo:
+      repo: 'https://github.com/puppetlabs/puppetlabs-vcsrepo.git'
+      ref:  '1.2.0'
   symlinks:
     lsststack: "#{source_dir}"
