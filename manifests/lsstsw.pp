@@ -7,8 +7,10 @@ define lsststack::lsstsw(
   $manage_group    = true,
   $lsstsw_repo     = 'https://github.com/lsst/lsstsw.git',
   $lsstsw_branch   = 'master',
+  $lsstsw_ensure   = 'present',
   $buildbot_repo   = 'https://github.com/lsst-sqre/buildbot-scripts.git',
   $buildbot_branch = 'master',
+  $buildbot_ensure = 'present',
   $debug           = false,
 ) {
   include ::wget
@@ -23,8 +25,10 @@ define lsststack::lsstsw(
   validate_bool($manage_group)
   validate_string($lsstsw_repo)
   validate_string($lsstsw_branch)
+  validate_re($lsstsw_ensure, ['^present$', '^latest$'])
   validate_string($buildbot_repo)
   validate_string($buildbot_branch)
+  validate_re($buildbot_ensure, ['^present$', '^latest$'])
   validate_bool($debug)
 
   if $manage_user {
@@ -69,7 +73,7 @@ define lsststack::lsstsw(
   $afwdata_repo   = 'git://git.lsstcorp.org/LSST/DMS/testdata/afwdata.git'
 
   vcsrepo { $lsstsw:
-    ensure   => present,
+    ensure   => $lsstsw_ensure,
     provider => git,
     user     => $user,
     group    => $group,
@@ -78,7 +82,7 @@ define lsststack::lsstsw(
   }
 
   vcsrepo { $buildbot:
-    ensure   => present,
+    ensure   => $buildbot_ensure,
     provider => git,
     user     => $user,
     group    => $group,
