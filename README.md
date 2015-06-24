@@ -100,8 +100,10 @@ lsststack::lsstsw { 'lsstsw':
   manage_group    => true,
   lsstsw_repo     => 'https://github.com/lsst/lsstsw.git',
   lsstsw_branch   => 'master',
+  lsstsw_ensure   => 'present',
   buildbot_repo   => 'https://github.com/lsst-sqre/buildbot-scripts.git',
   buildbot_branch => 'master',
+  buildbot_ensure => 'present',
   debug           => false,
 }
 ```
@@ -143,6 +145,12 @@ The URL to retrive the `lsst/lsstsw` repo from.
 
 The git ref to checkout.
 
+##### `lsstsw_ensure`
+
+`String` Defaults to 'present'
+
+Possible values are 'present' and 'latest'.
+
 ##### `buildbot_repo`
 
 `String` Defaults to 'https://github.com/lsst-sqre/buildbot-scripts.git'
@@ -154,6 +162,12 @@ The URL to retrive the `lsst-sqre/buildbot-scripts` repo from.
 `String` Defaults to 'master'
 
 The git ref to checkout.
+
+##### `buildbot_ensure`
+
+`String` Defaults to 'present'
+
+Possible values are 'present' and 'latest'.
 
 ##### `debug`
 

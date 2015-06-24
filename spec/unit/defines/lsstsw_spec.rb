@@ -265,6 +265,47 @@ EOS
       end
     end # lsstsw_branch =>
 
+    context 'lsstsw_ensure =>' do
+      context '(unset)' do
+        it do
+          should contain_lsststack__lsstsw(name).with(
+            :lsstsw_ensure => 'present'
+          )
+        end
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'present' do
+        let(:params) {{ :lsstsw_ensure => 'present' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'latest' do
+        let(:params) {{ :lsstsw_ensure => 'latest' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw").with(
+            :ensure => 'latest'
+          )
+        end
+      end
+
+      context 'bar' do
+        let(:params) {{ :lsstsw_ensure => 'bar' }}
+
+        it { should raise_error(Puppet::Error, /does not match/) }
+      end
+    end # lsstsw_ensure =>
+
     context 'buildbot_repo =>' do
       context '(unset)' do
         it do
@@ -326,6 +367,47 @@ end
         it { should raise_error(Puppet::Error, /is not a string/) }
       end
     end # buildbot_branch =>
+
+    context 'buildbot_ensure =>' do
+      context '(unset)' do
+        it do
+          should contain_lsststack__lsstsw(name).with(
+            :buildbot_ensure => 'present'
+          )
+        end
+        it do
+          should contain_vcsrepo("/home/#{name}/buildbot-scripts").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'present' do
+        let(:params) {{ :buildbot_ensure => 'present' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/buildbot-scripts").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'latest' do
+        let(:params) {{ :buildbot_ensure => 'latest' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/buildbot-scripts").with(
+            :ensure => 'latest'
+          )
+        end
+      end
+
+      context 'bar' do
+        let(:params) {{ :buildbot_ensure => 'bar' }}
+
+        it { should raise_error(Puppet::Error, /does not match/) }
+      end
+    end # buildbot_ensure =>
 
     context 'debug =>' do
       context '(unset)' do
