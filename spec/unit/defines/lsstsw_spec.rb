@@ -77,6 +77,15 @@ EOS
         ])
       end
       it do
+        should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+          :ensure   => 'present',
+          :provider => 'git',
+          :user     => name,
+          :group    => name,
+          :revision => 'master'
+        ).that_requires('Exec[deploy]')
+      end
+      it do
         should contain_exec('afwdata_clone').with(
           :command => "git clone -b master /home/#{name}/afwdata.bundle /home/#{name}/lsstsw/build/afwdata",
           :path    => ["/home/#{name}/lsstsw/lfs/bin", '/bin', '/usr/bin'],
@@ -85,8 +94,8 @@ EOS
           :user    => name,
           :timeout => 3600
         ).that_requires([
-          "Exec[deploy]",
           "Wget::Fetch[/home/#{name}/afwdata.bundle]",
+          "Exec[deploy]",
         ])
       end
       it do
@@ -107,7 +116,11 @@ EOS
       end
       it do
         should contain_exec('rebuild -p').
-          that_requires('Exec[git branch --set-upstream-to=origin/master]')
+          that_requires('Exec[git branch --set-upstream-to=origin/master]').
+          that_subscribes_to([
+            'Exec[deploy]',
+            "Vcsrepo[/home/#{name}/lsstsw/lsst_build]"
+          ])
       end
     end # default params
 
@@ -312,7 +325,7 @@ EOS
           should contain_lsststack__lsstsw(name).with(
             :buildbot_repo => 'https://github.com/lsst-sqre/buildbot-scripts.git'
           )
-end
+        end
         it do
           should contain_vcsrepo("/home/#{name}/buildbot-scripts").with(
             :source => 'https://github.com/lsst-sqre/buildbot-scripts.git'
@@ -408,6 +421,109 @@ end
         it { should raise_error(Puppet::Error, /does not match/) }
       end
     end # buildbot_ensure =>
+
+    context 'lsst_build_repo =>' do
+      context '(unset)' do
+        it do
+          should contain_lsststack__lsstsw(name).with(
+            :lsst_build_repo => 'https://github.com/lsst/lsst_build.git'
+          )
+        end
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :source => 'https://github.com/lsst/lsst_build.git'
+          )
+        end
+      end
+
+      context 'bar' do
+        let(:params) {{ :lsst_build_repo => 'bar' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :source => 'bar'
+          )
+        end
+      end
+
+      context '[]' do
+        let(:params) {{ :lsst_build_repo => [] }}
+
+        it { should raise_error(Puppet::Error, /is not a string/) }
+      end
+    end # lsst_build_repo =>
+
+    context 'lsst_build_branch =>' do
+      context '(unset)' do
+        it do
+          should contain_lsststack__lsstsw(name).with(
+            :lsst_build_branch => 'master'
+          )
+        end
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :revision => 'master'
+          )
+        end
+      end
+
+      context 'bar' do
+        let(:params) {{ :lsst_build_branch => 'bar' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :revision => 'bar'
+          )
+        end
+      end
+
+      context '[]' do
+        let(:params) {{ :lsst_build_branch => [] }}
+
+        it { should raise_error(Puppet::Error, /is not a string/) }
+      end
+    end # lsst_build_branch =>
+
+    context 'lsst_build_ensure =>' do
+      context '(unset)' do
+        it do
+          should contain_lsststack__lsstsw(name).with(
+            :lsst_build_ensure => 'present'
+          )
+        end
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'present' do
+        let(:params) {{ :lsst_build_ensure => 'present' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :ensure => 'present'
+          )
+        end
+      end
+
+      context 'latest' do
+        let(:params) {{ :lsst_build_ensure => 'latest' }}
+
+        it do
+          should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
+            :ensure => 'latest'
+          )
+        end
+      end
+
+      context 'bar' do
+        let(:params) {{ :lsst_build_ensure => 'bar' }}
+
+        it { should raise_error(Puppet::Error, /does not match/) }
+      end
+    end # lsst_build_ensure =>
 
     context 'debug =>' do
       context '(unset)' do
