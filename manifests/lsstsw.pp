@@ -1,17 +1,20 @@
 # == Define: lsststack::lsstsw
 #
 define lsststack::lsstsw(
-  $user            = $title,
-  $group           = $title,
-  $manage_user     = true,
-  $manage_group    = true,
-  $lsstsw_repo     = 'https://github.com/lsst/lsstsw.git',
-  $lsstsw_branch   = 'master',
-  $lsstsw_ensure   = 'present',
-  $buildbot_repo   = 'https://github.com/lsst-sqre/buildbot-scripts.git',
-  $buildbot_branch = 'master',
-  $buildbot_ensure = 'present',
-  $debug           = false,
+  $user              = $title,
+  $group             = $title,
+  $manage_user       = true,
+  $manage_group      = true,
+  $lsstsw_repo       = 'https://github.com/lsst/lsstsw.git',
+  $lsstsw_branch     = 'master',
+  $lsstsw_ensure     = 'present',
+  $buildbot_repo     = 'https://github.com/lsst-sqre/buildbot-scripts.git',
+  $buildbot_branch   = 'master',
+  $buildbot_ensure   = 'present',
+  $lsst_build_repo   = 'https://github.com/lsst/lsst_build.git',
+  $lsst_build_branch = 'master',
+  $lsst_build_ensure = 'present',
+  $debug             = false,
 ) {
   include ::wget
 
@@ -29,6 +32,9 @@ define lsststack::lsstsw(
   validate_string($buildbot_repo)
   validate_string($buildbot_branch)
   validate_re($buildbot_ensure, ['^present$', '^latest$'])
+  validate_string($lsst_build_repo)
+  validate_string($lsst_build_branch)
+  validate_re($lsst_build_ensure, ['^present$', '^latest$'])
   validate_bool($debug)
 
   if $manage_user {
@@ -64,6 +70,7 @@ define lsststack::lsstsw(
   }
 
   $lsstsw = "${home}/lsstsw"
+  $lsst_build = "${lsstsw}/lsst_build"
   $buildbot = "${home}/buildbot-scripts"
 
   # afwdata git bundle download hack
@@ -141,7 +148,20 @@ define lsststack::lsstsw(
     user        => $user,
     timeout     => 3600,
     require     => $deploy_deps,
-  } ->
+  }
+
+  # deploy will delete the lsst_build directory if it already exists so we need
+  # to manage the repo after deploy has completed
+  vcsrepo { $lsst_build:
+    ensure   => $lsst_build_ensure,
+    provider => git,
+    user     => $user,
+    group    => $group,
+    source   => $lsst_build_repo,
+    revision => $lsst_build_branch,
+    require  => Exec['deploy'],
+  }
+
   exec { 'afwdata_clone':
     command => "git clone -b master ${afwdata_bundle} ${afwdata_clone}",
     path    => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
@@ -149,7 +169,10 @@ define lsststack::lsstsw(
     creates => $afwdata_clone,
     user    => $user,
     timeout => 3600,
-    require => Wget::Fetch[$afwdata_bundle],
+    require => [
+      Wget::Fetch[$afwdata_bundle],
+      Exec['deploy'],
+    ],
   } ->
   exec { 'git remote rm origin': } ->
   exec { 'git remote add origin':
@@ -167,7 +190,10 @@ define lsststack::lsstsw(
     user        => $user,
     timeout     => 7200,
     provider    => shell,
-    subscribe   => Exec['deploy'],
+    subscribe   => [
+      Exec['deploy'],
+      Vcsrepo[$lsst_build],
+    ],
   }
 
   Exec[
