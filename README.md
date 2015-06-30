@@ -94,17 +94,20 @@ manifest.
 ```puppet
 # defaults
 lsststack::lsstsw { 'lsstsw':
-  user            => $title,
-  group           => $title,
-  manage_user     => true,
-  manage_group    => true,
-  lsstsw_repo     => 'https://github.com/lsst/lsstsw.git',
-  lsstsw_branch   => 'master',
-  lsstsw_ensure   => 'present',
-  buildbot_repo   => 'https://github.com/lsst-sqre/buildbot-scripts.git',
-  buildbot_branch => 'master',
-  buildbot_ensure => 'present',
-  debug           => false,
+  user              => $title,
+  group             => $title,
+  manage_user       => true,
+  manage_group      => true,
+  lsstsw_repo       => 'https://github.com/lsst/lsstsw.git',
+  lsstsw_branch     => 'master',
+  lsstsw_ensure     => 'present',
+  buildbot_repo     => 'https://github.com/lsst-sqre/buildbot-scripts.git',
+  buildbot_branch   => 'master',
+  buildbot_ensure   => 'present',
+  lsst_build_repo   => 'https://github.com/lsst/lsst_build.git',
+  lsst_build_branch => 'master',
+  lsst_build_ensure => 'present',
+  debug             => false,
 }
 ```
 
@@ -164,6 +167,24 @@ The URL to retrive the `lsst-sqre/buildbot-scripts` repo from.
 The git ref to checkout.
 
 ##### `buildbot_ensure`
+
+`String` Defaults to 'present'
+
+Possible values are 'present' and 'latest'.
+
+##### `lsst_build_repo`
+
+`String` Defaults to 'https://github.com/lsst/lsst_build.git'
+
+The URL to retrive the `lsst/lsst_build` repo from.
+
+##### `lsst_build_branch`
+
+`String` Defaults to 'master'
+
+The git ref to checkout.
+
+##### `lsst_build_ensure`
 
 `String` Defaults to 'present'
 
