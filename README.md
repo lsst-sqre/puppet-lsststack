@@ -197,6 +197,23 @@ Possible values are 'present' and 'latest'.
 This parameter is only useful for development and should not be considered
 part of the public API of this type.
 
+#### `hiera`
+
+##### `lsststack::lsstsw`
+
+Responds to the following hiera values:
+
+    ---
+    lsststack::lsstsw::lsstsw_repo: a
+    lsststack::lsstsw::lsstsw_branch: b
+    lsststack::lsstsw::lsstsw_ensure: latest
+    lsststack::lsstsw::buildbot_repo: c
+    lsststack::lsstsw::buildbot_branch: d
+    lsststack::lsstsw::buildbot_ensure: latest
+    lsststack::lsstsw::lsst_build_repo: e
+    lsststack::lsstsw::lsst_build_branch: f
+    lsststack::lsstsw::lsst_build_ensure: latest
+
 
 Limitations
 -----------
