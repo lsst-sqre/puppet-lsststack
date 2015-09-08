@@ -153,7 +153,6 @@ define lsststack::lsstsw(
     command     => "${lsstsw}/bin/deploy",
     path        => ['/bin', '/usr/bin'],
     environment => ["LSSTSW=${lsstsw}"],
-    creates     => "${lsstsw}/lfs/bin/numdiff",
     user        => $user,
     timeout     => 3600,
     require     => $deploy_deps,

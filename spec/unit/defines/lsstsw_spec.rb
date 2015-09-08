@@ -68,9 +68,7 @@ EOS
         )
       end
       it do
-        should contain_exec('deploy').with(
-          :creates => "/home/#{name}/lsstsw/lfs/bin/numdiff"
-        ).that_requires([
+        should contain_exec('deploy').that_requires([
           "Vcsrepo[/home/#{name}/lsstsw]",
           "Vcsrepo[/home/#{name}/buildbot-scripts]",
           'File[.gitconfig]'
