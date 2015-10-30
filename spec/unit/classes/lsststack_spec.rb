@@ -22,6 +22,7 @@ describe 'lsststack', :type => :class do
     'patch',
     'perl',
     'readline-devel',
+    'tar', # needed on el6, not part of @core or @base
     'zlib-devel',
     # needed by lua
     'ncurses-devel',
