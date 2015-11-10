@@ -13,6 +13,7 @@ Puppet lsststack Module
         * [`lsststack`](#lsststack)
     * [Defines](#defines)
         * [`lsststack::lsstsw`](#lsststacklsstsw)
+    * [Hiera](#hiera)
 4. [Limitations](#limitations)
     * [Tested Platforms](#tested-platforms)
 5. [Versioning](#versioning)
