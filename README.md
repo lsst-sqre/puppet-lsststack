@@ -13,6 +13,7 @@ Puppet lsststack Module
         * [`lsststack`](#lsststack)
     * [Defines](#defines)
         * [`lsststack::lsstsw`](#lsststacklsstsw)
+        * [`lsststack::newinstall`](#lsststacknewinstall)
     * [Hiera](#hiera)
 4. [Limitations](#limitations)
     * [Tested Platforms](#tested-platforms)
@@ -198,6 +199,69 @@ Possible values are 'present' and 'latest'.
 This parameter is only useful for development and should not be considered
 part of the public API of this type.
 
+#### `lsststack::newinstall`
+
+Note that this type requires that the `lsststack` class be declared in the
+manifest.
+
+```puppet
+# defaults
+lsststack::newinstall { 'lsstsw':
+  user         => $title,
+  group        => $title,
+  manage_user  => true,
+  manage_group => true,
+  stack_path   => undef,
+  source       => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh',
+  debug        => false,
+}
+```
+
+##### `user`
+
+`String` Defaults to resource title
+
+The system user account to use.
+
+##### `group`
+
+`String` Defaults to resource title
+
+The system user group to use.
+
+##### `manage_user`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `User` resource is declared for `$user`. If `false`, a `User` resource must be externally declared in the manifest.
+
+##### `manage_group`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `Group` resource is declared for `$group`. If `false`, a `Group`
+resource must be externally declared in the manifest.
+
+##### `stack_path`
+
+`String` Defaults to `undef`
+
+When this parameter is `undef`, the "stack" prefix path is constructed as
+`/home/<user>/stack`.
+
+##### `source`
+
+`String` Defaults to 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
+
+The URL to retrive the `newinstall.sh` script from.
+
+##### `debug`
+
+`Boolean` Defaults to `false`
+
+This parameter is only useful for development and should not be considered
+part of the public API of this type.
+
 #### `hiera`
 
 ##### `lsststack::lsstsw`
@@ -214,6 +278,13 @@ Responds to the following hiera values:
     lsststack::lsstsw::lsst_build_repo: e
     lsststack::lsstsw::lsst_build_branch: f
     lsststack::lsstsw::lsst_build_ensure: latest
+
+#### `lsststack::newinstall`
+
+Responds to the following hiera values:
+
+    ---
+    lsststack::newinstall::source: https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh
 
 
 Limitations
