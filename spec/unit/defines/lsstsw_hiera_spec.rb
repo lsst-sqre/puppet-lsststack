@@ -32,7 +32,7 @@ describe 'lsststack::lsstsw', :type => :define do
   let(:pre_condition) { 'include ::lsststack' }
 
   context 'hiera' do
-    hiera_params = YAML.load(File.read(fixtures('hieradata/common.yaml')))
+    hiera_params = YAML.load(File.read(fixtures('hieradata/lsstsw.yaml')))
     # strip lsststack::lsstsw:: namespace from hash keys in the hiera yaml
     # file.
     hiera_params.keys.each do |k|
