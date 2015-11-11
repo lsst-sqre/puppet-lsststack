@@ -89,7 +89,24 @@ describe 'lsststack', :type => :class do
       context 'true' do
         let(:params) {{ :install_dependencies => true }}
 
-        it { el_deps.each { |pkg| should contain_package(pkg) } }
+        context 'operatingsystemmajrelease => 6' do
+          before { facts[:operatingsystemmajrelease] = 6 }
+          it { el_deps.each { |pkg| should contain_package(pkg) } }
+          it do
+            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
+              should contain_package(pkg)
+            end
+          end
+        end
+        context 'operatingsystemmajrelease => 7' do
+          before { facts[:operatingsystemmajrelease] = 7 }
+          it { el_deps.each { |pkg| should contain_package(pkg) } }
+          it do
+            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
+              should_not contain_package(pkg)
+            end
+          end
+        end
       end
 
       context 'false' do
