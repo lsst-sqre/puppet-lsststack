@@ -3,7 +3,7 @@ HOSTS:
     roles:
       - master
     platform: ubuntu-14.04-amd64
-    box: chef/ubuntu-14.04
+    box: bento/ubuntu-14.04
     hypervisor: vagrant
 CONFIG:
   type: foss

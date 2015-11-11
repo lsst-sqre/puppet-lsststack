@@ -383,19 +383,20 @@ bundle exec rake
 This module uses `beaker` for acceptance/integration testing.
 
 ```sh
-BEAKER_set=centos-7.0 bundle exec rake beaker
+BEAKER_set=centos-7.1 bundle exec rake beaker
 ```
 
-Where `BEAKER_set` is name of a file (excluding the `.yml` extensions) under the path `spec/acceptance/nodesets/`.  Eg.
+Where `BEAKER_set` is name of a file (excluding the `.yml` extensions) under
+the path `spec/acceptance/nodesets/`.  Nodesets may be listed with the
+`beaker_nodes` rake target.  Eg.
 
 ```sh
-$ ls -1 spec/acceptance/nodesets/
-centos-6.6.yml
-centos-7.0.yml
-default.yml
-fedora-21.yml
-ubuntu-12.04.yml
-ubuntu-14.04.yml
+$ bundle exec rake beaker_nodes
+centos-6.7
+centos-7.1
+fedora-21
+ubuntu-12.04
+ubuntu-14.04
 ```
 
 See Also
