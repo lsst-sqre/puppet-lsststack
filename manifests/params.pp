@@ -48,7 +48,7 @@ class lsststack::params {
       ]
     }
     'RedHat': {
-      $base_packages = [
+      $dependency_packages = [
         'bison',
         'curl',
         'blas',
@@ -78,7 +78,7 @@ class lsststack::params {
         # needed for mysqlproxy
         'glib2-devel',
         # needed to build zookeeper
-        #'java-1.7.0-openjdk',
+        'java-1.8.0-openjdk',
         # needed to build git
         'gettext',
         'libcurl-devel',
@@ -90,16 +90,6 @@ class lsststack::params {
         'tree',
         'vim-enhanced',
       ]
-
-      case $::operatingsystem {
-        # fedora 21 moves to openjdk 1.8.0; el6 -> f20 have 1.7.0 available
-        'Fedora': {
-          $dependency_packages = concat($base_packages, 'java-1.8.0-openjdk')
-        }
-        default: {
-          $dependency_packages = concat($base_packages, 'java-1.7.0-openjdk')
-        }
-      }
     }
     default: { fail() }
   }

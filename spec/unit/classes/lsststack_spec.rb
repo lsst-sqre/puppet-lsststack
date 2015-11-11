@@ -31,7 +31,7 @@ describe 'lsststack', :type => :class do
     # needed for mysqlproxy
     'glib2-devel',
     # needed to build zookeeper
-    'java-1.7.0-openjdk',
+    'java-1.8.0-openjdk',
     # needed to build git
     'gettext',
     'libcurl-devel',
