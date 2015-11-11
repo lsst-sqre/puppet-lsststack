@@ -3,6 +3,7 @@
 # this class should be considered private
 class lsststack::params {
   $install_dependencies = true
+  $manage_repos         = true
   $install_convenience  = false
 
   case $::osfamily {

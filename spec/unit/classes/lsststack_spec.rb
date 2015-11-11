@@ -107,6 +107,39 @@ describe 'lsststack', :type => :class do
       end
     end # install_dependencies =>
 
+    context 'manage_repos =>' do
+      context 'true' do
+        let(:params) {{ :manage_repos => true }}
+
+        context 'operatingsystemmajrelease => 6' do
+          before { facts[:operatingsystemmajrelease] = 6 }
+          it { should contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
+        end
+        context 'operatingsystemmajrelease => 7' do
+          before { facts[:operatingsystemmajrelease] = 7 }
+          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
+          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-7-x86_64') }
+        end
+      end
+
+      context 'false' do
+        let(:params) {{ :manage_repos => false }}
+
+        # testing for the class only in the negative case as rspec-puppet
+        # doesn't currently allow us to express the catalog should not have
+        # *any* yumrepo resources
+        it { should_not contain_class('lsststack::repos') }
+      end
+
+      context '[]' do
+        let(:params) {{ :manage_repos => []}}
+
+        it 'should fail' do
+          should raise_error(Puppet::Error, /is not a boolean/)
+        end
+      end
+    end # manage_repos =>
+
     context 'install_convenience =>' do
       context 'true' do
         let(:params) {{ :install_convenience => true }}

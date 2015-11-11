@@ -77,6 +77,7 @@ lsststack::lsstsw { 'test':
 # defaults
 class { 'lsststack':
   install_dependencies => true,
+  manage_repos         => true,
   install_convenience  => false,
 }
 ```
@@ -86,6 +87,13 @@ class { 'lsststack':
 `Boolean` Defaults to `true`
 
 If `true`, build dependency packages will be installed.
+
+##### `manage_repos`
+
+`Boolean` Defaults to `true`
+
+If `true`, package repos (E.g. `yum`/`apt`) required for "system" dependencies
+will be configured.
 
 ##### `install_convenience`
 
