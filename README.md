@@ -151,7 +151,7 @@ resource must be externally declared in the manifest.
 
 `String` Defaults to 'https://github.com/lsst/lsstsw.git'
 
-The URL to retrive the `lsst/lsstsw` repo from.
+The URL to retrieve the `lsst/lsstsw` repo from.
 
 ##### `lsstsw_branch`
 
@@ -169,7 +169,7 @@ Possible values are 'present' and 'latest'.
 
 `String` Defaults to 'https://github.com/lsst-sqre/buildbot-scripts.git'
 
-The URL to retrive the `lsst-sqre/buildbot-scripts` repo from.
+The URL to retrieve the `lsst-sqre/buildbot-scripts` repo from.
 
 ##### `buildbot_branch`
 
@@ -187,7 +187,7 @@ Possible values are 'present' and 'latest'.
 
 `String` Defaults to 'https://github.com/lsst/lsst_build.git'
 
-The URL to retrive the `lsst/lsst_build` repo from.
+The URL to retrieve the `lsst/lsst_build` repo from.
 
 ##### `lsst_build_branch`
 
@@ -262,7 +262,7 @@ When this parameter is `undef`, the "stack" prefix path is constructed as
 
 `String` Defaults to 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
 
-The URL to retrive the `newinstall.sh` script from.
+The URL to retrieve the `newinstall.sh` script from.
 
 ##### `debug`
 
