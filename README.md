@@ -77,6 +77,7 @@ lsststack::lsstsw { 'test':
 # defaults
 class { 'lsststack':
   install_dependencies => true,
+  install_convenience  => false,
 }
 ```
 
@@ -85,6 +86,14 @@ class { 'lsststack':
 `Boolean` Defaults to `true`
 
 If `true`, build dependency packages will be installed.
+
+##### `install_convenience`
+
+`Boolean` Defaults to `false`
+
+If `true`, build "convenience" packages, which are not system packages required
+to build lsst software products but are convenient to have present, will be
+installed.
 
 ### Defines
 

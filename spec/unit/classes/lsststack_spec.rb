@@ -37,6 +37,11 @@ describe 'lsststack', :type => :class do
     'libcurl-devel',
     'perl-ExtUtils-MakeMaker',
   ]}
+  let(:el_con) {[
+    'screen',
+    'tree',
+    'vim-enhanced',
+  ]}
   let (:debian_deps) {[
     'make',
     # list from https://confluence.lsstcorp.org/display/LSWUG/Prerequisites
@@ -68,11 +73,17 @@ describe 'lsststack', :type => :class do
     'libcurl4-openssl-dev',
     'perl-modules',
   ]}
+  let (:debian_con) {[
+    'screen',
+    'tree',
+    'vim',
+  ]}
 
   describe 'for osfamily RedHat' do
     let(:facts) {{ :osfamily => 'RedHat' }}
 
     it { el_deps.each { |pkg| should contain_package(pkg) } }
+    it { el_con.each { |pkg| should_not contain_package(pkg) } }
 
     context 'install_dependencies =>' do
       context 'true' do
@@ -94,7 +105,29 @@ describe 'lsststack', :type => :class do
           should raise_error(Puppet::Error, /is not a boolean/)
         end
       end
-    end # isntall_dependencies =>
+    end # install_dependencies =>
+
+    context 'install_convenience =>' do
+      context 'true' do
+        let(:params) {{ :install_convenience => true }}
+
+        it { el_con.each { |pkg| should contain_package(pkg) } }
+      end
+
+      context 'false' do
+        let(:params) {{ :install_dependencies => false }}
+
+        it { el_con.each { |pkg| should_not contain_package(pkg) } }
+      end
+
+      context '[]' do
+        let(:params) {{ :install_convenience => []}}
+
+        it 'should fail' do
+          should raise_error(Puppet::Error, /is not a boolean/)
+        end
+      end
+    end # install_convenience =>
   end # for osfamily RedHat
 
   describe 'for osfamily Debian' do

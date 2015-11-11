@@ -3,6 +3,7 @@
 # this class should be considered private
 class lsststack::params {
   $install_dependencies = true
+  $install_convenience  = false
 
   case $::osfamily {
     'Debian': {
@@ -37,6 +38,12 @@ class lsststack::params {
         'gettext',
         'libcurl4-openssl-dev',
         'perl-modules',
+      ]
+
+      $convenience_packages = [
+        'screen',
+        'tree',
+        'vim',
       ]
     }
     'RedHat': {
@@ -76,6 +83,13 @@ class lsststack::params {
         'libcurl-devel',
         'perl-ExtUtils-MakeMaker',
       ]
+
+      $convenience_packages = [
+        'screen',
+        'tree',
+        'vim-enhanced',
+      ]
+
       case $::operatingsystem {
         # fedora 21 moves to openjdk 1.8.0; el6 -> f20 have 1.7.0 available
         'Fedora': {
