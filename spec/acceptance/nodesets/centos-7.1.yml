@@ -5,5 +5,7 @@ HOSTS:
     platform: el-7-x86_64
     box: bento/centos-7.1
     hypervisor: vagrant
+    vagrant_cpus: 4
+    vagrant_memsize: 3072
 CONFIG:
   type: foss
