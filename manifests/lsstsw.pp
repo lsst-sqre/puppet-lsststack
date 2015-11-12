@@ -25,8 +25,6 @@ define lsststack::lsstsw(
                               'present'),
   $debug             = false,
 ) {
-  include ::wget
-
   # only needed for dependencies when lsst_build attempts to build eups
   # packages
   Class[lsststack] -> Lsststack::Lsstsw[$title]
@@ -82,12 +80,6 @@ define lsststack::lsstsw(
   $lsst_build = "${lsstsw}/lsst_build"
   $buildbot = "${home}/buildbot-scripts"
 
-  # afwdata git bundle download hack
-  $afwdata_s3     = 'http://lsst-repos.s3.amazonaws.com/afwdata.bundle'
-  $afwdata_bundle = "${home}/afwdata.bundle"
-  $afwdata_clone  = "${lsstsw}/build/afwdata"
-  $afwdata_repo   = 'git://git.lsstcorp.org/LSST/DMS/testdata/afwdata.git'
-
   vcsrepo { $lsstsw:
     ensure   => $lsstsw_ensure,
     provider => git,
@@ -106,49 +98,6 @@ define lsststack::lsstsw(
     revision => $buildbot_branch,
   }
 
-  wget::fetch { $afwdata_bundle:
-    source      => $afwdata_s3,
-    destination => $afwdata_bundle,
-    execuser    => $user,
-    timeout     => 3600,
-    verbose     => false,
-  }
-
-  if $debug {
-    # Cache a copy of the bundle file as a convience for when manually testing
-    # by blowing away the lsstsw user without having to wait for the 3+ GB
-    # bundle to be redownloaded.
-    #
-    # E.g., `userdel -r $user`
-    Wget::Fetch[$afwdata_bundle] {
-      cache_dir => '/tmp',
-    }
-  }
-
-  # `lsst_build prepare` commits the build manifest to versiondb and git will
-  # exit with a status of 128 if an author is not set.
-  #
-  # note that .gitconfig indents with tabs
-  $gitconfig = '[user]
-	name = LSST Data Management
-	email = dm-devel@lists.lsst.org
-'
-
-  file { '.gitconfig':
-    ensure  => file,
-    owner   => $user,
-    group   => $group,
-    mode    => '0664',
-    path    => "${home}/.gitconfig",
-    content => $gitconfig,
-  }
-
-  $deploy_deps = [
-    Vcsrepo[$lsstsw],
-    Vcsrepo[$buildbot],
-    File['.gitconfig'],
-  ]
-
   exec { 'deploy':
     command     => "${lsstsw}/bin/deploy",
     path        => ['/bin', '/usr/bin'],
@@ -156,7 +105,34 @@ define lsststack::lsstsw(
     creates     => "${lsstsw}/lfs/bin/numdiff",
     user        => $user,
     timeout     => 3600,
-    require     => $deploy_deps,
+    require     => [
+      Vcsrepo[$lsstsw],
+      Vcsrepo[$buildbot],
+    ],
+  }
+
+  # `lsst_build prepare` commits the build manifest to versiondb and git will
+  # exit with a status of 128 if an author is not set.
+  $git_config = "${lsstsw}/versiondb/.git/config"
+  $git_name   = 'LSST DATA Management'
+  $git_email  = 'dm-devel@lists.lsst.org'
+
+  exec { 'user.name':
+    command => "git config -f ${git_config} user.name \"${git_name}\"",
+    path    => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
+    cwd     => $home,
+    user    => $user,
+    unless  => "grep -q '${git_name}' ${git_config}",
+    require => Exec['deploy'],
+  }
+
+  exec { 'user.email':
+    command => "git config -f ${git_config} user.email \"${git_email}\"",
+    path    => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
+    cwd     => $home,
+    user    => $user,
+    unless  => "grep -q '${git_email}' ${git_config}",
+    require => Exec['deploy'],
   }
 
   # deploy will delete the lsst_build directory if it already exists so we need
@@ -171,24 +147,6 @@ define lsststack::lsstsw(
     require  => Exec['deploy'],
   }
 
-  exec { 'afwdata_clone':
-    command => "git clone -b master ${afwdata_bundle} ${afwdata_clone}",
-    path    => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
-    cwd     => $home,
-    creates => $afwdata_clone,
-    user    => $user,
-    timeout => 3600,
-    require => [
-      Wget::Fetch[$afwdata_bundle],
-      Exec['deploy'],
-    ],
-  } ->
-  exec { 'git remote rm origin': } ->
-  exec { 'git remote add origin':
-    command => "git remote add origin ${afwdata_repo}",
-  } ->
-  exec { 'git pull origin master': } ->
-  exec { 'git branch --set-upstream-to=origin/master': } ->
   exec { 'rebuild -p':
     command     => "source ${lsstsw}/bin/setup.sh && ${lsstsw}/bin/rebuild -p",
     path        => ['/bin', '/usr/bin'],
@@ -199,23 +157,14 @@ define lsststack::lsstsw(
     user        => $user,
     timeout     => 7200,
     provider    => shell,
+    require     => [
+      Exec['user.name'],
+      Exec['user.email'],
+    ],
     subscribe   => [
       Exec['deploy'],
       Vcsrepo[$lsst_build],
     ],
   }
 
-  Exec[
-    'git remote rm origin',
-    'git remote add origin',
-    'git pull origin master',
-    'git branch --set-upstream-to=origin/master'
-  ] {
-    path        => ["${lsstsw}/lfs/bin", '/bin', '/usr/bin'],
-    cwd         => $afwdata_clone,
-    refreshonly => true,
-    user        => $user,
-    timeout     => 3600,
-    subscribe   => Exec['afwdata_clone'],
-  }
 }
