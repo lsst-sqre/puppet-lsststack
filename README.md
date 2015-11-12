@@ -54,18 +54,34 @@ class { 'lsststack':
 }
 ```
 
-#### Installing lsstsw under the test account
+#### Installing lsstsw under the `test` account
 
 ```puppet
+include ::lsststack
+
 lsststack::lsstsw { 'test': }
 ```
 
 #### Installing a fork/branch of lsstsw for testing
 
 ```puppet
+include ::lsststack
+
 lsststack::lsstsw { 'test':
   lsstsw_repo   => 'https://github.com/jhoblitt/lsstsw.git',
   lsstsw_branch => 'feature/eups-1.5.9',
+}
+```
+
+#### Installing `newinstall.sh` for the `build` account
+
+With the base path to the "stack" directory set to `/opt/lsst/software/stack`.
+
+```puppet
+include ::lsststack
+
+lsststack::newinstall { 'test':
+  stack_path => '/opt/lsst/software/stack',
 }
 ```
 
