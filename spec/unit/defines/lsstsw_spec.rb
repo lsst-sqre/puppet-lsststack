@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'lsststack::lsstsw', :type => :define do
-  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => 6 }}
+  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => '6' }}
   let(:name) { 'foo' }
   let(:title) { name }
   let(:pre_condition) { 'include ::lsststack' }

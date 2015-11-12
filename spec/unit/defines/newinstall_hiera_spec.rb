@@ -26,7 +26,7 @@ describe 'lsststack::newinstall', :type => :define do
     end
   end
 
-  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => 6 }}
+  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => '6' }}
   let(:name) { 'foo' }
   let(:title) { name }
   let(:pre_condition) { 'include ::lsststack' }

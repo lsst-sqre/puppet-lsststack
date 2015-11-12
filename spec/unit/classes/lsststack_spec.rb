@@ -90,7 +90,7 @@ describe 'lsststack', :type => :class do
         let(:params) {{ :install_dependencies => true }}
 
         context 'operatingsystemmajrelease => 6' do
-          before { facts[:operatingsystemmajrelease] = 6 }
+          before { facts[:operatingsystemmajrelease] = '6' }
           it { el_deps.each { |pkg| should contain_package(pkg) } }
           it do
             ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
@@ -99,7 +99,7 @@ describe 'lsststack', :type => :class do
           end
         end
         context 'operatingsystemmajrelease => 7' do
-          before { facts[:operatingsystemmajrelease] = 7 }
+          before { facts[:operatingsystemmajrelease] = '7' }
           it { el_deps.each { |pkg| should contain_package(pkg) } }
           it do
             ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
@@ -129,11 +129,11 @@ describe 'lsststack', :type => :class do
         let(:params) {{ :manage_repos => true }}
 
         context 'operatingsystemmajrelease => 6' do
-          before { facts[:operatingsystemmajrelease] = 6 }
+          before { facts[:operatingsystemmajrelease] = '6' }
           it { should contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
         end
         context 'operatingsystemmajrelease => 7' do
-          before { facts[:operatingsystemmajrelease] = 7 }
+          before { facts[:operatingsystemmajrelease] = '7' }
           it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
           it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-7-x86_64') }
         end
