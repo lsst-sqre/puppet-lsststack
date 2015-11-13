@@ -3,6 +3,8 @@
 # this class should be considered private
 class lsststack::params {
   $install_dependencies = true
+  $manage_repos         = true
+  $install_convenience  = false
 
   case $::osfamily {
     'Debian': {
@@ -38,6 +40,12 @@ class lsststack::params {
         'libcurl4-openssl-dev',
         'perl-modules',
       ]
+
+      $convenience_packages = [
+        'screen',
+        'tree',
+        'vim',
+      ]
     }
     'RedHat': {
       $base_packages = [
@@ -70,21 +78,25 @@ class lsststack::params {
         # needed for mysqlproxy
         'glib2-devel',
         # needed to build zookeeper
-        #'java-1.7.0-openjdk',
+        'java-1.8.0-openjdk',
         # needed to build git
         'gettext',
         'libcurl-devel',
         'perl-ExtUtils-MakeMaker',
       ]
-      case $::operatingsystem {
-        # fedora 21 moves to openjdk 1.8.0; el6 -> f20 have 1.7.0 available
-        'Fedora': {
-          $dependency_packages = concat($base_packages, 'java-1.8.0-openjdk')
-        }
-        default: {
-          $dependency_packages = concat($base_packages, 'java-1.7.0-openjdk')
-        }
+
+      $convenience_packages = [
+        'screen',
+        'tree',
+        'vim-enhanced',
+      ]
+
+      $devtoolset_packages = $::operatingsystemmajrelease ? {
+        '6'     => ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'],
+        default => [],
       }
+
+      $dependency_packages = concat($base_packages, $devtoolset_packages)
     }
     default: { fail() }
   }

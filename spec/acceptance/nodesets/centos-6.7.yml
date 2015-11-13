@@ -1,9 +1,11 @@
 HOSTS:
-  centos-6.6:
+  centos-6.7:
     roles:
       - master
     platform: el-6-x86_64
-    box: chef/centos-6.6
+    box: bento/centos-6.7
     hypervisor: vagrant
+    vagrant_cpus: 4
+    vagrant_memsize: 3072
 CONFIG:
   type: foss

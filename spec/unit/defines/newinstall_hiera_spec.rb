@@ -13,7 +13,7 @@ module RSpec::Puppet
   end
 end
 
-describe 'lsststack::lsstsw', :type => :define do
+describe 'lsststack::newinstall', :type => :define do
   before(:all) do
     RSpec.configure do |c|
       c.hiera_config = fixtures('hiera/hiera.yaml')
@@ -32,17 +32,17 @@ describe 'lsststack::lsstsw', :type => :define do
   let(:pre_condition) { 'include ::lsststack' }
 
   context 'hiera' do
-    hiera_params = YAML.load(File.read(fixtures('hieradata/lsstsw.yaml')))
-    # strip lsststack::lsstsw:: namespace from hash keys in the hiera yaml
+    hiera_params = YAML.load(File.read(fixtures('hieradata/newinstall.yaml')))
+    # strip lsststack::newinstall:: namespace from hash keys in the hiera yaml
     # file.
     hiera_params.keys.each do |k|
-      hiera_params[k.sub(/^lsststack::lsstsw::/, '').to_sym] =
+      hiera_params[k.sub(/^lsststack::newinstall::/, '').to_sym] =
         hiera_params.delete(k)
     end
 
     context 'data overrides parameters defaults' do
       hiera_params.each_pair do |k,v|
-        it { should contain_lsststack__lsstsw(name).with( k => v ) }
+        it { should contain_lsststack__newinstall(name).with( k => v ) }
       end
     end # data overrides parameters defaults
 
@@ -51,20 +51,13 @@ describe 'lsststack::lsstsw', :type => :define do
       # convert 'latest' values to 'present' and prefix all other values with
       # 'p'
       define_params.each_pair do |k,v|
-        newv = nil
-        if v == 'latest'
-          newv = 'present'
-        else
-          newv = "p#{v}"
-        end
-
-        define_params[k] = newv
+        define_params[k] = "p#{v}"
       end
 
       let(:params) {define_params}
 
       define_params.each_pair do |k,v|
-        it { should contain_lsststack__lsstsw(name).with( k => v ) }
+        it { should contain_lsststack__newinstall(name).with( k => v ) }
       end
     end # parameters have precedence over data
   end # hiera

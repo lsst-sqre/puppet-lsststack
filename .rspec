@@ -1,1 +1,1 @@
---color --fail-fast --format doc
+--color --fail-fast --format doc --order random

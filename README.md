@@ -13,6 +13,8 @@ Puppet lsststack Module
         * [`lsststack`](#lsststack)
     * [Defines](#defines)
         * [`lsststack::lsstsw`](#lsststacklsstsw)
+        * [`lsststack::newinstall`](#lsststacknewinstall)
+    * [Hiera](#hiera)
 4. [Limitations](#limitations)
     * [Tested Platforms](#tested-platforms)
 5. [Versioning](#versioning)
@@ -52,18 +54,34 @@ class { 'lsststack':
 }
 ```
 
-#### Installing lsstsw under the test account
+#### Installing lsstsw under the `test` account
 
 ```puppet
+include ::lsststack
+
 lsststack::lsstsw { 'test': }
 ```
 
 #### Installing a fork/branch of lsstsw for testing
 
 ```puppet
+include ::lsststack
+
 lsststack::lsstsw { 'test':
   lsstsw_repo   => 'https://github.com/jhoblitt/lsstsw.git',
   lsstsw_branch => 'feature/eups-1.5.9',
+}
+```
+
+#### Installing `newinstall.sh` for the `build` account
+
+With the base path to the "stack" directory set to `/opt/lsst/software/stack`.
+
+```puppet
+include ::lsststack
+
+lsststack::newinstall { 'test':
+  stack_path => '/opt/lsst/software/stack',
 }
 ```
 
@@ -75,6 +93,8 @@ lsststack::lsstsw { 'test':
 # defaults
 class { 'lsststack':
   install_dependencies => true,
+  manage_repos         => true,
+  install_convenience  => false,
 }
 ```
 
@@ -83,6 +103,21 @@ class { 'lsststack':
 `Boolean` Defaults to `true`
 
 If `true`, build dependency packages will be installed.
+
+##### `manage_repos`
+
+`Boolean` Defaults to `true`
+
+If `true`, package repos (E.g. `yum`/`apt`) required for "system" dependencies
+will be configured.
+
+##### `install_convenience`
+
+`Boolean` Defaults to `false`
+
+If `true`, build "convenience" packages, which are not system packages required
+to build lsst software products but are convenient to have present, will be
+installed.
 
 ### Defines
 
@@ -140,7 +175,7 @@ resource must be externally declared in the manifest.
 
 `String` Defaults to 'https://github.com/lsst/lsstsw.git'
 
-The URL to retrive the `lsst/lsstsw` repo from.
+The URL to retrieve the `lsst/lsstsw` repo from.
 
 ##### `lsstsw_branch`
 
@@ -158,7 +193,7 @@ Possible values are 'present' and 'latest'.
 
 `String` Defaults to 'https://github.com/lsst-sqre/buildbot-scripts.git'
 
-The URL to retrive the `lsst-sqre/buildbot-scripts` repo from.
+The URL to retrieve the `lsst-sqre/buildbot-scripts` repo from.
 
 ##### `buildbot_branch`
 
@@ -176,7 +211,7 @@ Possible values are 'present' and 'latest'.
 
 `String` Defaults to 'https://github.com/lsst/lsst_build.git'
 
-The URL to retrive the `lsst/lsst_build` repo from.
+The URL to retrieve the `lsst/lsst_build` repo from.
 
 ##### `lsst_build_branch`
 
@@ -189,6 +224,69 @@ The git ref to checkout.
 `String` Defaults to 'present'
 
 Possible values are 'present' and 'latest'.
+
+##### `debug`
+
+`Boolean` Defaults to `false`
+
+This parameter is only useful for development and should not be considered
+part of the public API of this type.
+
+#### `lsststack::newinstall`
+
+Note that this type requires that the `lsststack` class be declared in the
+manifest.
+
+```puppet
+# defaults
+lsststack::newinstall { 'lsstsw':
+  user         => $title,
+  group        => $title,
+  manage_user  => true,
+  manage_group => true,
+  stack_path   => undef,
+  source       => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh',
+  debug        => false,
+}
+```
+
+##### `user`
+
+`String` Defaults to resource title
+
+The system user account to use.
+
+##### `group`
+
+`String` Defaults to resource title
+
+The system user group to use.
+
+##### `manage_user`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `User` resource is declared for `$user`. If `false`, a `User` resource must be externally declared in the manifest.
+
+##### `manage_group`
+
+`Boolean` Defaults to `true`
+
+If `true`, a `Group` resource is declared for `$group`. If `false`, a `Group`
+resource must be externally declared in the manifest.
+
+##### `stack_path`
+
+`String` Defaults to `undef`
+
+When this parameter is `undef`, the "stack" prefix path is constructed as
+`/home/<user>/stack`.
+
+##### `source`
+
+`String` Defaults to 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
+
+The URL to retrieve the `newinstall.sh` script from.
 
 ##### `debug`
 
@@ -213,6 +311,13 @@ Responds to the following hiera values:
     lsststack::lsstsw::lsst_build_repo: e
     lsststack::lsstsw::lsst_build_branch: f
     lsststack::lsstsw::lsst_build_ensure: latest
+
+#### `lsststack::newinstall`
+
+Responds to the following hiera values:
+
+    ---
+    lsststack::newinstall::source: https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh
 
 
 Limitations
@@ -278,19 +383,20 @@ bundle exec rake
 This module uses `beaker` for acceptance/integration testing.
 
 ```sh
-BEAKER_set=centos-7.0 bundle exec rake beaker
+BEAKER_set=centos-7.1 bundle exec rake beaker
 ```
 
-Where `BEAKER_set` is name of a file (excluding the `.yml` extensions) under the path `spec/acceptance/nodesets/`.  Eg.
+Where `BEAKER_set` is name of a file (excluding the `.yml` extensions) under
+the path `spec/acceptance/nodesets/`.  Nodesets may be listed with the
+`beaker_nodes` rake target.  Eg.
 
 ```sh
-$ ls -1 spec/acceptance/nodesets/
-centos-6.6.yml
-centos-7.0.yml
-default.yml
-fedora-21.yml
-ubuntu-12.04.yml
-ubuntu-14.04.yml
+$ bundle exec rake beaker_nodes
+centos-6.7
+centos-7.1
+fedora-21
+ubuntu-12.04
+ubuntu-14.04
 ```
 
 See Also

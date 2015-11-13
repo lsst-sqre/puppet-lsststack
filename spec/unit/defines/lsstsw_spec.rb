@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'lsststack::lsstsw', :type => :define do
-  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => 6 }}
+  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => '6' }}
   let(:name) { 'foo' }
   let(:title) { name }
   let(:pre_condition) { 'include ::lsststack' }
@@ -13,7 +13,6 @@ describe 'lsststack::lsstsw', :type => :define do
         should contain_lsststack__lsstsw(name).
           that_requires('Class[lsststack]')
       end
-      it { should contain_class('wget') }
       it do
         should contain_user(name).with(
           :ensure     => 'present',
@@ -46,35 +45,22 @@ describe 'lsststack::lsstsw', :type => :define do
         )
       end
       it do
-        should contain_wget__fetch("/home/#{name}/afwdata.bundle").with(
-          :destination => "/home/#{name}/afwdata.bundle",
-          :execuser    => name,
-          :timeout     => 3600,
-          :verbose     => false
-        ).without_cache_dir
-      end
-      it do
-        should contain_file('.gitconfig').with(
-          :ensure  => 'file',
-          :owner   => name,
-          :group   => name,
-          :mode    => '0664',
-          :path    => "/home/#{name}/.gitconfig",
-          :content => <<-EOS
-[user]
-	name = LSST Data Management
-	email = dm-devel@lists.lsst.org
-EOS
-        )
-      end
-      it do
         should contain_exec('deploy').with(
           :creates => "/home/#{name}/lsstsw/lfs/bin/numdiff"
         ).that_requires([
           "Vcsrepo[/home/#{name}/lsstsw]",
           "Vcsrepo[/home/#{name}/buildbot-scripts]",
-          'File[.gitconfig]'
         ])
+      end
+      it do
+        should contain_exec('user.name').with(
+          :command => "git config -f /home/#{name}/lsstsw/versiondb/.git/config user.name \"LSST DATA Management\""
+        ).that_requires('Exec[deploy]')
+      end
+      it do
+        should contain_exec('user.email').with(
+          :command => "git config -f /home/#{name}/lsstsw/versiondb/.git/config user.email \"dm-devel@lists.lsst.org\""
+        ).that_requires('Exec[deploy]')
       end
       it do
         should contain_vcsrepo("/home/#{name}/lsstsw/lsst_build").with(
@@ -86,37 +72,11 @@ EOS
         ).that_requires('Exec[deploy]')
       end
       it do
-        should contain_exec('afwdata_clone').with(
-          :command => "git clone -b master /home/#{name}/afwdata.bundle /home/#{name}/lsstsw/build/afwdata",
-          :path    => ["/home/#{name}/lsstsw/lfs/bin", '/bin', '/usr/bin'],
-          :cwd     => "/home/#{name}",
-          :creates => "/home/#{name}/lsstsw/build/afwdata",
-          :user    => name,
-          :timeout => 3600
-        ).that_requires([
-          "Wget::Fetch[/home/#{name}/afwdata.bundle]",
-          "Exec[deploy]",
-        ])
-      end
-      it do
-        should contain_exec('git remote rm origin').
-          that_requires('Exec[afwdata_clone]')
-      end
-      it do
-        should contain_exec('git remote add origin').
-          that_requires('Exec[git remote rm origin]')
-      end
-      it do
-        should contain_exec('git pull origin master').
-          that_requires('Exec[git remote add origin]')
-      end
-      it do
-        should contain_exec('git branch --set-upstream-to=origin/master').
-          that_requires('Exec[git pull origin master]')
-      end
-      it do
         should contain_exec('rebuild -p').
-          that_requires('Exec[git branch --set-upstream-to=origin/master]').
+          that_requires([
+            'Exec[user.name]',
+            'Exec[user.email]',
+          ]).
           that_subscribes_to([
             'Exec[deploy]',
             "Vcsrepo[/home/#{name}/lsstsw/lsst_build]"

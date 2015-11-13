@@ -31,11 +31,16 @@ describe 'lsststack', :type => :class do
     # needed for mysqlproxy
     'glib2-devel',
     # needed to build zookeeper
-    'java-1.7.0-openjdk',
+    'java-1.8.0-openjdk',
     # needed to build git
     'gettext',
     'libcurl-devel',
     'perl-ExtUtils-MakeMaker',
+  ]}
+  let(:el_con) {[
+    'screen',
+    'tree',
+    'vim-enhanced',
   ]}
   let (:debian_deps) {[
     'make',
@@ -68,17 +73,40 @@ describe 'lsststack', :type => :class do
     'libcurl4-openssl-dev',
     'perl-modules',
   ]}
+  let (:debian_con) {[
+    'screen',
+    'tree',
+    'vim',
+  ]}
 
   describe 'for osfamily RedHat' do
     let(:facts) {{ :osfamily => 'RedHat' }}
 
     it { el_deps.each { |pkg| should contain_package(pkg) } }
+    it { el_con.each { |pkg| should_not contain_package(pkg) } }
 
     context 'install_dependencies =>' do
       context 'true' do
         let(:params) {{ :install_dependencies => true }}
 
-        it { el_deps.each { |pkg| should contain_package(pkg) } }
+        context 'operatingsystemmajrelease => 6' do
+          before { facts[:operatingsystemmajrelease] = '6' }
+          it { el_deps.each { |pkg| should contain_package(pkg) } }
+          it do
+            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
+              should contain_package(pkg)
+            end
+          end
+        end
+        context 'operatingsystemmajrelease => 7' do
+          before { facts[:operatingsystemmajrelease] = '7' }
+          it { el_deps.each { |pkg| should contain_package(pkg) } }
+          it do
+            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
+              should_not contain_package(pkg)
+            end
+          end
+        end
       end
 
       context 'false' do
@@ -94,7 +122,62 @@ describe 'lsststack', :type => :class do
           should raise_error(Puppet::Error, /is not a boolean/)
         end
       end
-    end # isntall_dependencies =>
+    end # install_dependencies =>
+
+    context 'manage_repos =>' do
+      context 'true' do
+        let(:params) {{ :manage_repos => true }}
+
+        context 'operatingsystemmajrelease => 6' do
+          before { facts[:operatingsystemmajrelease] = '6' }
+          it { should contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
+        end
+        context 'operatingsystemmajrelease => 7' do
+          before { facts[:operatingsystemmajrelease] = '7' }
+          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
+          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-7-x86_64') }
+        end
+      end
+
+      context 'false' do
+        let(:params) {{ :manage_repos => false }}
+
+        # testing for the class only in the negative case as rspec-puppet
+        # doesn't currently allow us to express the catalog should not have
+        # *any* yumrepo resources
+        it { should_not contain_class('lsststack::repos') }
+      end
+
+      context '[]' do
+        let(:params) {{ :manage_repos => []}}
+
+        it 'should fail' do
+          should raise_error(Puppet::Error, /is not a boolean/)
+        end
+      end
+    end # manage_repos =>
+
+    context 'install_convenience =>' do
+      context 'true' do
+        let(:params) {{ :install_convenience => true }}
+
+        it { el_con.each { |pkg| should contain_package(pkg) } }
+      end
+
+      context 'false' do
+        let(:params) {{ :install_dependencies => false }}
+
+        it { el_con.each { |pkg| should_not contain_package(pkg) } }
+      end
+
+      context '[]' do
+        let(:params) {{ :install_convenience => []}}
+
+        it 'should fail' do
+          should raise_error(Puppet::Error, /is not a boolean/)
+        end
+      end
+    end # install_convenience =>
   end # for osfamily RedHat
 
   describe 'for osfamily Debian' do
