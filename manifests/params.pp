@@ -43,8 +43,10 @@ class lsststack::params {
 
       $convenience_packages = [
         'screen',
+	'tmux',
         'tree',
         'vim',
+	'emacs-nox'
       ]
     }
     'RedHat': {
@@ -87,8 +89,10 @@ class lsststack::params {
 
       $convenience_packages = [
         'screen',
+	'tmux',
         'tree',
         'vim-enhanced',
+	'emacs-nox'
       ]
 
       $devtoolset_packages = $::operatingsystemmajrelease ? {
