@@ -39,8 +39,10 @@ describe 'lsststack', :type => :class do
   ]}
   let(:el_con) {[
     'screen',
+    'tmux',
     'tree',
     'vim-enhanced',
+    'emacs-nox'
   ]}
   let (:debian_deps) {[
     'make',
@@ -75,8 +77,10 @@ describe 'lsststack', :type => :class do
   ]}
   let (:debian_con) {[
     'screen',
+    'tmux',
     'tree',
     'vim',
+    'emacs-nox'
   ]}
 
   describe 'for osfamily RedHat' do
