@@ -87,7 +87,7 @@ define lsststack::newinstall(
 
   exec { 'newinstall.sh':
     environment => ["PWD=${real_stack_path}"],
-    command     => 'echo -e "yes\nyes" | newinstall.sh -c',
+    command     => 'newinstall.sh -b',
     path        => ['/bin', '/usr/bin', $real_stack_path],
     cwd         => $real_stack_path,
     user        => $user,

@@ -57,7 +57,7 @@ describe 'lsststack::newinstall', :type => :define do
       it do
         should contain_exec('newinstall.sh').with(
           :environment => ["PWD=/home/#{name}/stack"],
-          :command => 'echo -e "yes\nyes" | newinstall.sh -c',
+          :command => 'newinstall.sh -b',
           :path => ['/bin', '/usr/bin', "/home/#{name}/stack"],
           :cwd => "/home/#{name}/stack",
           :user => name,
