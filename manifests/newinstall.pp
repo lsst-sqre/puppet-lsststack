@@ -7,7 +7,7 @@ define lsststack::newinstall(
   $manage_group = true,
   $stack_path   = undef,
   $source       = hiera('lsststack::newinstall::source',
-                        'https://sw.lsstcorp.org/eupspkg/newinstall.sh'),
+                        'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'),
   $debug        = false,
 ) {
   include ::wget
@@ -87,13 +87,17 @@ define lsststack::newinstall(
 
   exec { 'newinstall.sh':
     environment => ["PWD=${real_stack_path}"],
-    command     => 'newinstall.sh -b',
+    command     => 'if grep -q -i "CentOS release 6" /etc/redhat-release; then
+      . /opt/rh/devtoolset-3/enable
+    fi
+    newinstall.sh -b',
     path        => ['/bin', '/usr/bin', $real_stack_path],
     cwd         => $real_stack_path,
     user        => $user,
     logoutput   => true,
     creates     => "${real_stack_path}/loadLSST.bash",
     timeout     => 900,
+    provider    => 'shell',
     require     => File['newinstall.sh'],
   }
 }

@@ -38,7 +38,7 @@ describe 'lsststack::newinstall', :type => :define do
       end
       it do
         should contain_wget__fetch('newinstall.sh').with(
-          :source      => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh',
+          :source      => 'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh',
           :destination => "/home/#{name}/stack/newinstall.sh",
           :execuser    => name,
           :timeout     => 60,
@@ -57,12 +57,13 @@ describe 'lsststack::newinstall', :type => :define do
       it do
         should contain_exec('newinstall.sh').with(
           :environment => ["PWD=/home/#{name}/stack"],
-          :command => 'newinstall.sh -b',
-          :path => ['/bin', '/usr/bin', "/home/#{name}/stack"],
-          :cwd => "/home/#{name}/stack",
-          :user => name,
-          :logoutput => true,
-          :creates => "/home/#{name}/stack/loadLSST.bash"
+          :command     => /newinstall.sh -b/,
+          :path        => ['/bin', '/usr/bin', "/home/#{name}/stack"],
+          :cwd         => "/home/#{name}/stack",
+          :user        => name,
+          :logoutput   => true,
+          :creates     => "/home/#{name}/stack/loadLSST.bash",
+          :provider    => 'shell'
         ).that_requires('File[newinstall.sh]')
       end
     end # default params
@@ -196,12 +197,12 @@ describe 'lsststack::newinstall', :type => :define do
       context '(unset)' do
         it do
           should contain_lsststack__newinstall(name).with(
-            :source => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
+            :source => 'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'
           )
         end
         it do
           should contain_wget__fetch('newinstall.sh').with(
-            :source => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
+            :source => 'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'
           )
         end
       end
