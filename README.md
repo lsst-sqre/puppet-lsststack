@@ -245,7 +245,7 @@ lsststack::newinstall { 'lsstsw':
   manage_user  => true,
   manage_group => true,
   stack_path   => undef,
-  source       => 'https://sw.lsstcorp.org/eupspkg/newinstall.sh',
+  source       => 'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh',
   debug        => false,
 }
 ```
@@ -284,7 +284,7 @@ When this parameter is `undef`, the "stack" prefix path is constructed as
 
 ##### `source`
 
-`String` Defaults to 'https://sw.lsstcorp.org/eupspkg/newinstall.sh'
+`String` Defaults to 'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'
 
 The URL to retrieve the `newinstall.sh` script from.
 

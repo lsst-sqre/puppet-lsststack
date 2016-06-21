@@ -7,7 +7,7 @@ define lsststack::newinstall(
   $manage_group = true,
   $stack_path   = undef,
   $source       = hiera('lsststack::newinstall::source',
-                        'https://sw.lsstcorp.org/eupspkg/newinstall.sh'),
+                        'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'),
   $debug        = false,
 ) {
   include ::wget
