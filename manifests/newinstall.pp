@@ -87,13 +87,17 @@ define lsststack::newinstall(
 
   exec { 'newinstall.sh':
     environment => ["PWD=${real_stack_path}"],
-    command     => 'newinstall.sh -b',
+    command     => 'if grep -q -i "CentOS release 6" /etc/redhat-release; then
+      . /opt/rh/devtoolset-3/enable
+    fi
+    newinstall.sh -b',
     path        => ['/bin', '/usr/bin', $real_stack_path],
     cwd         => $real_stack_path,
     user        => $user,
     logoutput   => true,
     creates     => "${real_stack_path}/loadLSST.bash",
     timeout     => 900,
+    provider    => 'shell',
     require     => File['newinstall.sh'],
   }
 }

@@ -57,12 +57,13 @@ describe 'lsststack::newinstall', :type => :define do
       it do
         should contain_exec('newinstall.sh').with(
           :environment => ["PWD=/home/#{name}/stack"],
-          :command => 'newinstall.sh -b',
-          :path => ['/bin', '/usr/bin', "/home/#{name}/stack"],
-          :cwd => "/home/#{name}/stack",
-          :user => name,
-          :logoutput => true,
-          :creates => "/home/#{name}/stack/loadLSST.bash"
+          :command     => /newinstall.sh -b/,
+          :path        => ['/bin', '/usr/bin', "/home/#{name}/stack"],
+          :cwd         => "/home/#{name}/stack",
+          :user        => name,
+          :logoutput   => true,
+          :creates     => "/home/#{name}/stack/loadLSST.bash",
+          :provider    => 'shell'
         ).that_requires('File[newinstall.sh]')
       end
     end # default params
