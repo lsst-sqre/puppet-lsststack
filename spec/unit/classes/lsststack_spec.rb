@@ -96,20 +96,10 @@ describe 'lsststack', :type => :class do
         context 'operatingsystemmajrelease => 6' do
           before { facts[:operatingsystemmajrelease] = '6' }
           it { el_deps.each { |pkg| should contain_package(pkg) } }
-          it do
-            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
-              should contain_package(pkg)
-            end
-          end
         end
         context 'operatingsystemmajrelease => 7' do
           before { facts[:operatingsystemmajrelease] = '7' }
           it { el_deps.each { |pkg| should contain_package(pkg) } }
-          it do
-            ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'].each do |pkg|
-              should_not contain_package(pkg)
-            end
-          end
         end
       end
 
@@ -132,15 +122,8 @@ describe 'lsststack', :type => :class do
       context 'true' do
         let(:params) {{ :manage_repos => true }}
 
-        context 'operatingsystemmajrelease => 6' do
-          before { facts[:operatingsystemmajrelease] = '6' }
-          it { should contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
-        end
-        context 'operatingsystemmajrelease => 7' do
-          before { facts[:operatingsystemmajrelease] = '7' }
-          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-6-x86_64') }
-          it { should_not contain_yumrepo('rhscl-devtoolset-3-epel-7-x86_64') }
-        end
+        # class is empty after refactoring
+        it { should contain_class('lsststack::repos') }
       end
 
       context 'false' do
