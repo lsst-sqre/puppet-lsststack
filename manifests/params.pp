@@ -50,7 +50,7 @@ class lsststack::params {
       ]
     }
     'RedHat': {
-      $base_packages = [
+      $dependency_packages = [
         'bison',
         'curl',
         'blas',
@@ -94,13 +94,6 @@ class lsststack::params {
         'vim-enhanced',
         'emacs-nox'
       ]
-
-      $devtoolset_packages = $::operatingsystemmajrelease ? {
-        '6'     => ['devtoolset-3-gcc', 'devtoolset-3-gcc-c++'],
-        default => [],
-      }
-
-      $dependency_packages = concat($base_packages, $devtoolset_packages)
     }
     default: { fail() }
   }
