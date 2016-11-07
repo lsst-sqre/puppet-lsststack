@@ -1,7 +1,12 @@
 require 'spec_helper'
 
 describe 'lsststack::newinstall', :type => :define do
-  let(:facts) {{ :osfamily => 'RedHat', :operatingsystemmajrelease => '6' }}
+  let(:facts) {{
+    :osfamily                  => 'RedHat',
+    :operatingsystem           => 'RedHat',
+    :operatingsystemmajrelease => '6',
+    :kernel                    => 'Linux',
+  }}
   let(:name) { 'foo' }
   let(:title) { name }
   let(:pre_condition) { 'include ::lsststack' }
