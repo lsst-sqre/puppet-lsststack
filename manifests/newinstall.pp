@@ -87,10 +87,7 @@ define lsststack::newinstall(
 
   exec { 'newinstall.sh':
     environment => ["PWD=${real_stack_path}"],
-    command     => 'if grep -q -i "CentOS release 6" /etc/redhat-release; then
-      . /opt/rh/devtoolset-3/enable
-    fi
-    newinstall.sh -b',
+    command     => 'newinstall.sh -b',
     path        => ['/bin', '/usr/bin', $real_stack_path],
     cwd         => $real_stack_path,
     user        => $user,

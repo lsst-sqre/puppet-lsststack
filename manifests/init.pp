@@ -11,28 +11,28 @@ class lsststack(
   validate_bool($install_convenience)
 
   if $install_dependencies {
-    Anchor['lsststack::begin'] ->
-      class { 'lsststack::dependencies': } ->
-        Anchor['lsststack::end']
+    Anchor['lsststack::begin']
+      -> class { 'lsststack::dependencies': }
+        -> Anchor['lsststack::end']
   }
 
   if $manage_repos {
-    Anchor['lsststack::begin'] ->
-      class { 'lsststack::repos': } ->
-        Anchor['lsststack::end']
+    Anchor['lsststack::begin']
+      -> class { 'lsststack::repos': }
+        -> Anchor['lsststack::end']
 
     if $install_dependencies {
-      Class['lsststack::repos'] ->
-        Class['lsststack::dependencies']
+      Class['lsststack::repos']
+        -> Class['lsststack::dependencies']
     }
   }
 
   if $install_convenience {
-    Anchor['lsststack::begin'] ->
-      class { 'lsststack::convenience': } ->
-        Anchor['lsststack::end']
+    Anchor['lsststack::begin']
+      -> class { 'lsststack::convenience': }
+        -> Anchor['lsststack::end']
   }
 
-  anchor { 'lsststack::begin': } ->
-  anchor { 'lsststack::end': }
+  anchor { 'lsststack::begin': }
+    -> anchor { 'lsststack::end': }
 }
