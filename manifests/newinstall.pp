@@ -1,14 +1,15 @@
 # == Define: lsststack::newinstall
 #
 define lsststack::newinstall(
-  $user         = $title,
-  $group        = $title,
-  $manage_user  = true,
-  $manage_group = true,
-  $stack_path   = undef,
-  $source       = hiera('lsststack::newinstall::source',
-                        'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'),
-  $debug        = false,
+  $user                = $title,
+  $group               = $title,
+  $manage_user         = true,
+  $manage_group        = true,
+  $stack_path          = undef,
+  $source              = hiera('lsststack::newinstall::source',
+    'https://raw.githubusercontent.com/lsst/lsst/master/scripts/newinstall.sh'),
+  $lsst_python_version = '3',
+  $debug               = false,
 ) {
   include ::wget
 
@@ -20,6 +21,7 @@ define lsststack::newinstall(
   validate_bool($manage_group)
   if $stack_path { validate_absolute_path($stack_path) }
   validate_string($source)
+  validate_string($lsst_python_version)
   validate_bool($debug)
 
   if $manage_user {
@@ -86,7 +88,10 @@ define lsststack::newinstall(
   }
 
   exec { 'newinstall.sh':
-    environment => ["PWD=${real_stack_path}"],
+    environment => [
+      "PWD=${real_stack_path}",
+      "LSST_PYTHON_VERSION=${lsst_python_version}",
+    ],
     command     => 'newinstall.sh -b',
     path        => ['/bin', '/usr/bin', $real_stack_path],
     cwd         => $real_stack_path,

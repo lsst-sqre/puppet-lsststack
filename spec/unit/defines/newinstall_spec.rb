@@ -61,7 +61,10 @@ describe 'lsststack::newinstall', :type => :define do
       end
       it do
         should contain_exec('newinstall.sh').with(
-          :environment => ["PWD=/home/#{name}/stack"],
+          :environment => [
+            "PWD=/home/#{name}/stack",
+            "LSST_PYTHON_VERSION=3",
+          ],
           :command     => /newinstall.sh -b/,
           :path        => ['/bin', '/usr/bin', "/home/#{name}/stack"],
           :cwd         => "/home/#{name}/stack",
@@ -228,6 +231,23 @@ describe 'lsststack::newinstall', :type => :define do
         it { should raise_error(Puppet::Error, /is not a string/) }
       end
     end # source =>
+
+    context 'lsst_python_version =>' do
+      context '(unset)' do
+        it { should contain_lsststack__newinstall(name).with(:lsst_python_version => 3) }
+      end
+
+      context '2' do
+        let(:params) {{ :lsst_python_version => '2' }}
+        it { should contain_lsststack__newinstall(name).with(:lsst_python_version => 2) }
+      end
+
+      context '[]' do
+        let(:params) {{ :lsst_python_version => [] }}
+
+        it { should raise_error(Puppet::Error, /is not a string/) }
+      end
+    end # group =>
 
     context 'debug =>' do
       context '(unset)' do
