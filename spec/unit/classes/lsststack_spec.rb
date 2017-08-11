@@ -69,7 +69,7 @@ describe 'lsststack', :type => :class do
     # needed for mysqlproxy
     'libglib2.0-dev',
     # needed to build zookeeper
-    'openjdk-7-jre',
+    'default-jre',
     # needed to build git
     'gettext',
     'libcurl4-openssl-dev',
