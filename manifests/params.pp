@@ -46,7 +46,7 @@ class lsststack::params {
         'tmux',
         'tree',
         'vim',
-        'emacs-nox'
+        'emacs24-nox',
       ]
     }
     'RedHat': {
