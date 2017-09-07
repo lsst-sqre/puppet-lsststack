@@ -13,12 +13,13 @@ class lsststack::params {
         'make',
         # list from https://confluence.lsstcorp.org/display/LSWUG/Prerequisites
         'bison',
-        'curl',
         'ca-certificates', # needed by curl on ubuntu
+        'curl',
         'flex',
         'g++',
         'git',
         'libbz2-dev',
+        'libgl1-mesa-swx11', # needed by conda qt / pyqt packages
         'libreadline6-dev',
         'libx11-dev',
         'libxt-dev',
@@ -52,10 +53,10 @@ class lsststack::params {
     'RedHat': {
       $dependency_packages = [
         'bison',
-        'curl',
         'blas',
         'bzip2-devel',
         'bzip2', # needed on el7 -- pulled in by bzip2-devel on el6?
+        'curl',
         'flex',
         'fontconfig',
         'freetype-devel',
@@ -67,6 +68,7 @@ class lsststack::params {
         'libXrender',
         'libXt-devel',
         'make',
+        'mesa-libGL', # needed by conda qt / pyqt packages
         'openssl-devel',
         'patch',
         'perl',
