@@ -37,6 +37,9 @@ describe 'lsststack', :type => :class do
     'gettext',
     'libcurl-devel',
     'perl-ExtUtils-MakeMaker',
+    'which',
+    'sed',
+    'gawk',
   ]}
   let(:el_con) {[
     'screen',

@@ -87,6 +87,10 @@ class lsststack::params {
         'gettext',
         'libcurl-devel',
         'perl-ExtUtils-MakeMaker',
+        # needed to build [at least] eups
+        'which',
+        'sed',
+        'gawk',
       ]
 
       $convenience_packages = [
