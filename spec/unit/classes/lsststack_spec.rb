@@ -10,8 +10,6 @@ describe 'lsststack', :type => :class do
     'flex',
     'fontconfig',
     'freetype-devel',
-    'gcc-c++',
-    'gcc-gfortran',
     'git', # needed on el6, in @core for others?
     'libuuid-devel',
     'libXext',
@@ -48,6 +46,10 @@ describe 'lsststack', :type => :class do
     'vim-enhanced',
     'emacs-nox'
   ]}
+  let(:el_cc) {[
+    'gcc-c++',
+    'gcc-gfortran',
+  ]}
   let (:debian_deps) {[
     'make',
     # list from https://confluence.lsstcorp.org/display/LSWUG/Prerequisites
@@ -55,7 +57,6 @@ describe 'lsststack', :type => :class do
     'ca-certificates', # needed by curl on ubuntu
     'curl',
     'flex',
-    'g++',
     'git',
     'libbz2-dev',
     'libgl1-mesa-swx11', # needed by conda qt / pyqt packages
@@ -87,12 +88,16 @@ describe 'lsststack', :type => :class do
     'vim',
     'emacs-nox'
   ]}
+  let (:debian_cc) {[
+    'g++',
+  ]}
 
   describe 'for osfamily RedHat' do
     let(:facts) {{ :osfamily => 'RedHat' }}
 
     it { el_deps.each { |pkg| should contain_package(pkg) } }
     it { el_con.each { |pkg| should_not contain_package(pkg) } }
+    it { el_cc.each { |pkg| should_not contain_package(pkg) } }
 
     context 'install_dependencies =>' do
       context 'true' do
@@ -157,7 +162,7 @@ describe 'lsststack', :type => :class do
       end
 
       context 'false' do
-        let(:params) {{ :install_dependencies => false }}
+        let(:params) {{ :install_convenience => false }}
 
         it { el_con.each { |pkg| should_not contain_package(pkg) } }
       end
@@ -170,11 +175,35 @@ describe 'lsststack', :type => :class do
         end
       end
     end # install_convenience =>
+
+    context 'install_cc =>' do
+      context 'true' do
+        let(:params) {{ :install_cc => true }}
+
+        it { el_cc.each { |pkg| should contain_package(pkg) } }
+      end
+
+      context 'false' do
+        let(:params) {{ :install_cc => false }}
+
+        it { el_cc.each { |pkg| should_not contain_package(pkg) } }
+      end
+
+      context '[]' do
+        let(:params) {{ :install_cc => []}}
+
+        it 'should fail' do
+          should raise_error(Puppet::Error, /is not a boolean/)
+        end
+      end
+    end # install_convenience =>
   end # for osfamily RedHat
 
   describe 'for osfamily Debian' do
     let(:facts) {{ :osfamily => 'Debian' }}
 
     it { debian_deps.each { |pkg| should contain_package(pkg) } }
+    it { debian_con.each { |pkg| should_not contain_package(pkg) } }
+    it { debian_cc.each { |pkg| should_not contain_package(pkg) } }
   end # for osfamily Debian
 end
