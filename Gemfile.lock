@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.6.0)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     beaker (4.5.0)
       beaker-hostgenerator
       hocon (~> 1.0)
@@ -63,7 +63,7 @@ GEM
     pry-byebug (3.4.3)
       byebug (>= 9.0, < 9.1)
       pry (~> 0.10)
-    public_suffix (3.0.3)
+    public_suffix (4.0.6)
     puppet (6.13.0)
       concurrent-ruby (~> 1.0)
       deep_merge (~> 1.0)
